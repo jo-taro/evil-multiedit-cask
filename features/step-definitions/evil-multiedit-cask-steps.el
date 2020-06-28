@@ -2,11 +2,11 @@
 ;; files in this directory whose names end with "-steps.el" will be
 ;; loaded automatically by Ecukes.
 
-(Given "^I switch to buffer$"
-  (lambda ()
-   (get-buffer-create "test.c")))
+(Given "^I switch to buffer \"\\([^\"]+\\)\"$"
+  (lambda (buffer-name)
+   (get-buffer-create buffer-name)))
 
-(And "^I prepare modes$"
+(And "^I prepare evil-mode and c-mode$"
   (lambda ()
     (evil-mode) (c-mode)))
 
@@ -15,9 +15,8 @@
     (erase-buffer)))
 
 (And "^I insert the text$"
-  (lambda ()
-    (insert "int\nint\nint")))
-    ;; (insert "int\nint\nint")))
+  (lambda (contents)
+    (insert contents)))
 
 (And "^I go to the beginning of the buffer$"
   (lambda ()
@@ -27,42 +26,13 @@
   (lambda (key fn-name)
     (global-set-key (kbd key) (intern fn-name))))
 
-(When "^I change the multiple items$"
-  (lambda ()
-    ;; ...
-    (call-interactively 'evil-multiedit-match-and-next)
-    (call-interactively 'evil-multiedit-match-and-next)
-    (call-interactively 'evil-multiedit-match-and-next)
-    (call-interactively 'evil-multiedit--substitute)
-    (insert "foo")
+(When "^I input following keystrokes \"\\([^\"]+\\)\"$"
+  (lambda (keystrokes)
+    (let ((keys (split-string keystrokes "," t split-string-default-separators)))
+      (dolist (key keys)
+        (call-interactively (global-key-binding (kbd key)))))
     ))
 
-;; (Then "^I should see \"\\(.+\\)\"$"
-;;   (lambda (something)
-;;     ;; (string= something "foo\nfoo\nfoo")))
-;;     (string= something "foo")))
-
-;; (Given "^I have \"\\(.+\\)\"$"
-;;   (lambda (something)
-;;     ;; ...
-;;     ))
-
-;; (When "^I have \"\\(.+\\)\"$"
-;;   (lambda (something)
-;;     ;; ...
-;;     ))
-
-;; (Then "^I should have \"\\(.+\\)\"$"
-;;   (lambda (something)
-;;     ;; ...
-;;     ))
-
-;; (And "^I have \"\\(.+\\)\"$"
-;;   (lambda (something)
-;;     ;; ...
-;;     ))
-
-;; (But "^I should not have \"\\(.+\\)\"$"
-;;   (lambda (something)
-;;     ;; ...
-;;     ))
+(And "^I insert the \"\\([^\"]+\\)\"$"
+  (lambda (contents)
+    (insert contents)))
